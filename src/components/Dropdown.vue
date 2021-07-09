@@ -1,5 +1,5 @@
 <template>
-  <div class="ml-3 relative">
+  <div class="ml-3 relative" ref="dropdownRef">
     <div>
       <button
         type="button"
@@ -37,45 +37,39 @@
       v-if="isOpen"
     >
       <!-- Active: "bg-gray-100", Not Active: "" -->
-      <a
-        href="#"
-        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-        role="menuitem"
-        tabindex="-1"
-        id="user-menu-item-0"
-        >Your Profile</a
-      >
-      <a
-        href="#"
-        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-        role="menuitem"
-        tabindex="-1"
-        id="user-menu-item-1"
-        >Settings</a
-      >
-      <a
-        href="#"
-        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-        role="menuitem"
-        tabindex="-1"
-        id="user-menu-item-2"
-        >Sign out</a
-      >
+      <slot></slot>
     </div>
   </div>
 </template>
 
-<script>
-import { defineComponent, ref } from "vue";
+<script lang="ts">
+import { defineComponent, ref, onMounted, onUnmounted } from "vue";
 export default defineComponent({
   name: "",
   setup() {
     const isOpen = ref(false);
+    const dropdownRef = ref<null | HTMLElement>(null);
     const toggleOpen = () => {
       isOpen.value = !isOpen.value;
     };
+    const handler = (e: MouseEvent) => {
+      const { value } = dropdownRef;
+      if (value) {
+        console.log(value);
+        if (!value.contains(e.target as HTMLElement) && isOpen.value === true) {
+          isOpen.value = false;
+        }
+      }
+    };
+    onMounted(() => {
+      document.addEventListener("click", handler);
+    });
+    onUnmounted(() => {
+      document.removeEventListener("click", handler);
+    });
     return {
       isOpen,
+      dropdownRef,
       toggleOpen,
     };
   },

@@ -16,7 +16,12 @@
           <div>你好：{{ user.name }}</div>
 
           <!-- Profile dropdown -->
-          <Dropdown />
+          <!-- <Dropdown /> -->
+          <Dropdown>
+            <DropdownItem disabled>新建文章</DropdownItem>
+            <DropdownItem>编辑资料</DropdownItem>
+            <DropdownItem>退出登录</DropdownItem>
+          </Dropdown>
         </div>
         <div v-else>
           <button
@@ -38,6 +43,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import Dropdown from "@/components/Dropdown.vue";
+import DropdownItem from "@/components/DropdownItem.vue";
 export interface UserProps {
   isLogin: boolean;
   name?: string;
@@ -47,6 +53,7 @@ export interface UserProps {
 export default defineComponent({
   components: {
     Dropdown,
+    DropdownItem,
   },
   props: {
     user: {
