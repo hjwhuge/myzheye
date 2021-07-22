@@ -10,9 +10,11 @@
   "dependencies": {
     "@headlessui/vue": "^1.1.0",
     "@heroicons/vue": "^1.0.1",
+    "mitt": "^3.0.0",
     "vue": "^3.0.0"
   },
   "devDependencies": {
+    "@tailwindcss/forms": "^0.3.3",
     "@tailwindcss/postcss7-compat": "^2.1.2",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
     "@typescript-eslint/parser": "^4.18.0",
