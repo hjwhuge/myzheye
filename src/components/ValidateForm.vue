@@ -2,7 +2,7 @@
   <form class="validate-form-container">
     <slot name="default"></slot>
     <div
-      class="submit-area px-4 py-3 bg-gray-50 text-center sm:px-6"
+      class="submit-area py-3 text-left w-60 ml-6"
       @click.prevent="submitForm"
     >
       <slot name="submit">

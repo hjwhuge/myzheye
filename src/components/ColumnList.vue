@@ -11,6 +11,7 @@
       <p>
         <button
           class="px-5 py-1 text-blue-600 font-semibold rounded border border-purple-200 hover:text-white hover:bg-blue-600 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
+          @click="onDetails(item.id)"
         >
           进入专栏
         </button>
@@ -21,12 +22,15 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
+import { useRouter } from "vue-router";
 export interface ColumnProps {
   id: number;
   avatar?: string;
   title: string;
   description: string;
 }
+// 解决ts require 类型报错
+declare function require(moduleName: string): never;
 
 export default defineComponent({
   name: "ColumnList",
@@ -37,6 +41,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    const route = useRouter();
     const columnList = computed(() => {
       return props.list.map((item) => {
         if (!item.avatar) {
@@ -45,8 +50,12 @@ export default defineComponent({
         return item;
       });
     });
+    const onDetails = (id: number) => {
+      route.push(`/column/${id}`);
+    };
     return {
       columnList,
+      onDetails,
     };
   },
 });

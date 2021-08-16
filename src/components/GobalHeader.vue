@@ -7,30 +7,34 @@
         class="relative flex items-center justify-between h-16 text-white text-lg"
       >
         <div>
-          <div>花荣专栏</div>
+          <div>
+            <router-link to="/">花荣专栏</router-link>
+          </div>
         </div>
         <div
           class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
-          v-if="user.isLogin"
+          v-if="user.id"
         >
-          <div>你好：{{ user.name }}</div>
+          <div>你好：{{ user.nickName }}</div>
 
           <!-- Profile dropdown -->
           <!-- <Dropdown /> -->
           <Dropdown>
-            <DropdownItem disabled>新建文章</DropdownItem>
-            <DropdownItem>编辑资料</DropdownItem>
-            <DropdownItem>退出登录</DropdownItem>
+            <DropdownItem @click.prevent="onCreate">新建文章</DropdownItem>
+            <DropdownItem disabled>编辑资料</DropdownItem>
+            <DropdownItem @click="onLogout">退出登录</DropdownItem>
           </Dropdown>
         </div>
         <div v-else>
           <button
             class="px-5 py-1 font-semibold rounded border border-purple-200 hover:text-black hover:bg-white hover:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 mr-3"
+            @click="onLogin"
           >
             登录
           </button>
           <button
             class="px-5 py-1 font-semibold rounded border border-purple-200 hover:text-black hover:bg-white hover:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
+            @click="onSignup"
           >
             注册
           </button>
@@ -42,13 +46,12 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { UserProps } from "@/store";
+import { logout } from "@/api";
 import Dropdown from "@/components/Dropdown.vue";
 import DropdownItem from "@/components/DropdownItem.vue";
-export interface UserProps {
-  isLogin: boolean;
-  name?: string;
-  id?: number;
-}
 
 export default defineComponent({
   components: {
@@ -60,6 +63,31 @@ export default defineComponent({
       type: Object as PropType<UserProps>,
       required: true,
     },
+  },
+  setup() {
+    const router = useRouter();
+    const store = useStore();
+    const onLogin = () => {
+      router.push("/login");
+    };
+    const onSignup = () => {
+      router.push("/signup");
+    };
+    const onCreate = () => {
+      router.push("/create");
+    };
+    const onLogout = () => {
+      logout().then(() => {
+        store.commit("logout");
+        router.push("/login");
+      });
+    };
+    return {
+      onLogin,
+      onSignup,
+      onLogout,
+      onCreate,
+    };
   },
 });
 </script>

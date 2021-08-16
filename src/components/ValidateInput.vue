@@ -1,6 +1,15 @@
 <template>
   <div class="validate-input-container">
     <input
+      v-if="tag !== 'textarea'"
+      class="mt-1 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+      :class="[{ 'border-red-400': inputRef.error }]"
+      v-model="inputRef.val"
+      v-bind="$attrs"
+      @blur="validateInput"
+    />
+    <textarea
+      v-else
       class="mt-1 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
       :class="[{ 'border-red-400': inputRef.error }]"
       :value="inputRef.val"
@@ -23,14 +32,20 @@ import { defineComponent, PropType, reactive, onMounted } from "vue";
 import { emitter } from "./ValidateForm.vue";
 const emailReg = /\S+@\S+\.\S+/;
 interface RuleProp {
-  type: "required" | "email";
+  type: "required" | "email" | "custom";
   message: string;
+  validator?: () => boolean;
 }
 export type RulesProp = RuleProp[];
+export type TagType = "input" | "textarea";
 export default defineComponent({
   props: {
     rules: Array as PropType<RulesProp>,
     modelValue: String,
+    tag: {
+      type: String as PropType<TagType>,
+      default: "input",
+    },
   },
   inheritAttrs: false,
   setup(props, context) {
@@ -56,6 +71,9 @@ export default defineComponent({
               break;
             case "email":
               passed = emailReg.test(inputRef.val);
+              break;
+            case "custom":
+              passed = rule.validator ? rule.validator() : true;
               break;
 
             default:
