@@ -20,6 +20,31 @@
             </select>
           </div>
           <div class="col-span-6 sm:col-span-4">
+            <Uploader
+              action="/api/upload"
+              :beforeUpload="uploadCheck"
+              @file-uploaded="onFileUploaded"
+              class="flex justify-center items-center bg-gray-100 text-gray-600 h-48 rounded cursor-pointer"
+            >
+              <h2>点击上传文章头图</h2>
+              <template v-slot:loading>
+                <div class="flex items-center">
+                  <div
+                    class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"
+                  ></div>
+                  <h2 class="ml-10">正在上传....</h2>
+                </div>
+              </template>
+              <template #uploaded="dataProps">
+                <img
+                  :src="dataProps.uploadedData.data.url"
+                  class="w-full h-full object-contain"
+                  alt=""
+                />
+              </template>
+            </Uploader>
+          </div>
+          <div class="col-span-6 sm:col-span-4">
             <label
               for="email-address"
               class="block text-sm font-medium text-gray-700"
@@ -63,23 +88,28 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { GlobalDataProps, PostProps } from "@/store";
+import { createPost } from "@/api";
 import createMessage from "@/components/createMessage";
+import Uploader from "@/components/Uploader.vue";
 import ValidateForm from "../components/ValidateForm.vue";
 import ValidateInput, { RulesProp } from "../components/ValidateInput.vue";
+import { beforeUploadCheck } from "@/utils/helper";
 export default defineComponent({
   name: "Create",
   components: {
     ValidateForm,
     ValidateInput,
+    Uploader,
   },
   setup() {
     const router = useRouter();
     const store = useStore<GlobalDataProps>();
 
+    const curImageUrl = ref("");
     const columnIdValue = ref("");
     const titleValue = ref("");
     const titleRules: RulesProp = [
@@ -98,17 +128,45 @@ export default defineComponent({
           return;
         }
         const newPost: PostProps = {
-          id: new Date().getTime(),
           title: titleValue.value,
           content: contentValue.value,
           columnId: +columnIdValue.value,
           createdAt: new Date().toLocaleString(),
         };
-        store.commit("createPost", newPost);
+        if (curImageUrl.value) {
+          newPost.image = curImageUrl.value;
+        }
+        createPost(newPost).then(() => {
+          // console.log(res);
+          createMessage("success", "文章新建成功！");
 
-        router.push({ name: "column", params: { id: columnIdValue.value } });
+          router.push({ name: "column", params: { id: columnIdValue.value } });
+        });
       }
     };
+    const uploadCheck = (file: File) => {
+      //   console.log(file);
+      const result = beforeUploadCheck(file, {
+        format: ["image/jpeg", "image/png"],
+        size: 1,
+      });
+      const { passed, error } = result;
+      if (error === "format") {
+        createMessage("error", "上传图片只能是 JPG 或者 PNG 格式！");
+      }
+      if (error === "size") {
+        createMessage("error", "上传图片大小不能大于 1Mb ！");
+      }
+      return passed;
+    };
+    const onFileUploaded = (rawData: any) => {
+      console.log(rawData);
+      curImageUrl.value = rawData.data.url;
+      createMessage("success", "图片上传成功！");
+    };
+    onMounted(() => {
+      store.dispatch("fetchColumns");
+    });
     return {
       columnIdValue,
       titleValue,
@@ -117,6 +175,8 @@ export default defineComponent({
       detailRules,
       columns,
       onFormSubmit,
+      uploadCheck,
+      onFileUploaded,
     };
   },
 });

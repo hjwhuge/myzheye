@@ -5,7 +5,7 @@ import Login from "../views/Login.vue";
 import Signup from "../views/Signup.vue";
 import ColumnDetail from "../views/ColumnDetail.vue";
 import CreatePost from "../views/CreatePost.vue";
-// import PostDetail from "../views/PostDetail.vue";
+import PostDetail from "../views/PostDetail.vue";
 import store from "../store";
 const routerHistory = createWebHistory();
 const router = createRouter({
@@ -37,11 +37,11 @@ const router = createRouter({
       name: "column",
       component: ColumnDetail,
     },
-    // {
-    //   path: "/posts/:id",
-    //   name: "post",
-    //   component: PostDetail,
-    // },
+    {
+      path: "/posts/:id",
+      name: "post",
+      component: PostDetail,
+    },
   ],
 });
 router.beforeEach((to, from, next) => {
@@ -56,6 +56,7 @@ router.beforeEach((to, from, next) => {
     // token 不存在
     if (!token) {
       next("login");
+      localStorage.removeItem("userinfo");
     } else {
       if (userinfo) {
         next();

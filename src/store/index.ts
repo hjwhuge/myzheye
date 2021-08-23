@@ -1,5 +1,10 @@
 import { createStore } from "vuex";
-import { getColumns, getColumn, getPost, getUserinfo } from "@/api";
+import { getColumns, getColumn, getPosts, getUserinfo } from "@/api";
+export interface ResponseType<P> {
+  code: number;
+  msg: string;
+  data: P;
+}
 export interface UserProps {
   email?: string;
   nickName?: string;
@@ -12,7 +17,6 @@ export interface ColumnProps {
   description: string;
 }
 export interface PostProps {
-  id: number;
   title: string;
   content: string;
   image?: string;
@@ -45,9 +49,6 @@ const store = createStore<GlobalDataProps>({
       state.user = {};
       localStorage.removeItem("userinfo");
     },
-    createPost(state, newPost) {
-      state.posts.push(newPost);
-    },
     fetchColumns(state, data) {
       state.columns = data?.list || [];
     },
@@ -77,7 +78,7 @@ const store = createStore<GlobalDataProps>({
     },
     async fetchPost({ commit }, currentId) {
       // console.log(currentId);
-      const { data } = await getPost(currentId);
+      const { data } = await getPosts(currentId);
       commit("fetchPost", data);
     },
     async fetchUserinfo({ commit }) {

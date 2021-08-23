@@ -44,17 +44,3 @@ export default defineComponent({
   },
 });
 </script>
-<style>
-.loader {
-  border-top-color: #3498db !important;
-  animation: spinner 1.5s linear infinite;
-}
-@keyframes spinner {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-</style>

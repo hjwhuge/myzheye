@@ -4,5 +4,6 @@ import router from "./router";
 import store from "./store";
 
 import "tailwindcss/tailwind.css";
+import "@/style/global.css";
 
 createApp(App).use(router).use(store).mount("#app");

@@ -1,4 +1,5 @@
 import request from "@/utils/request";
+import { PostProps } from "@/store";
 
 export function getColumns() {
   return request({
@@ -18,7 +19,7 @@ export function getColumn(columnId: number) {
   });
 }
 
-export function getPost(columnId: number) {
+export function getPosts(columnId: number) {
   return request({
     url: "/posts",
     method: "get",
@@ -27,6 +28,21 @@ export function getPost(columnId: number) {
       page: 1,
       size: 10,
     },
+  });
+}
+
+export function getPost(columnId: number) {
+  return request({
+    url: `/posts/${columnId}`,
+    method: "get",
+  });
+}
+
+export function createPost(data: PostProps) {
+  return request({
+    url: "/posts",
+    method: "post",
+    data,
   });
 }
 
