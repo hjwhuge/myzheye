@@ -14,6 +14,29 @@ Myzheye是仿知乎前后端分离项目，主要目的是学习对Vue3框架以
 | 文章详情页     | 文章详情      |
 | 文章新增页     | 文章新增、图片上传等 |                 |
 
+## Project setup
+```
+npm install
+```
+
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
+
+### Compiles and minifies for production
+```
+npm run build
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
+
 ## 部署方式
 
 暂未开发完成、后续补充
