@@ -15,7 +15,7 @@
               class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             >
               <option v-for="item in columns" :key="item.id" :value="item.id">
-                {{ item.title }}
+                {{ item.columnName }}
               </option>
             </select>
           </div>
@@ -58,6 +58,20 @@
               placeholder="请输入文章标题"
             />
           </div>
+          <div class="col-span-6 sm:col-span-4">
+            <label
+              for="email-address"
+              class="block text-sm font-medium text-gray-700"
+              >文章简介</label
+            >
+            <ValidateInput
+              :rules="descriptionRules"
+              v-model="descriptionValue"
+              type="text"
+              name="email-address"
+              placeholder="请输入文章简介"
+            />
+          </div>
 
           <div class="col-span-6 sm:col-span-4">
             <label
@@ -94,9 +108,9 @@ import { useStore } from "vuex";
 import { GlobalDataProps, PostProps } from "@/store";
 import { createPost } from "@/api";
 import createMessage from "@/components/createMessage";
-import Uploader from "@/components/Uploader.vue";
 import ValidateForm from "../components/ValidateForm.vue";
 import ValidateInput, { RulesProp } from "../components/ValidateInput.vue";
+import Uploader from "@/components/Uploader.vue";
 import { beforeUploadCheck } from "@/utils/helper";
 export default defineComponent({
   name: "Create",
@@ -115,6 +129,10 @@ export default defineComponent({
     const titleRules: RulesProp = [
       { type: "required", message: "文章标题不能为空" },
     ];
+    const descriptionValue = ref("");
+    const descriptionRules: RulesProp = [
+      { type: "required", message: "文章简介不能为空" },
+    ];
     const contentValue = ref("");
     const detailRules: RulesProp = [
       { type: "required", message: "文章详情不能为空" },
@@ -129,6 +147,7 @@ export default defineComponent({
         }
         const newPost: PostProps = {
           title: titleValue.value,
+          description: descriptionValue.value,
           content: contentValue.value,
           columnId: +columnIdValue.value,
           createdAt: new Date().toLocaleString(),
@@ -171,6 +190,8 @@ export default defineComponent({
       columnIdValue,
       titleValue,
       titleRules,
+      descriptionValue,
+      descriptionRules,
       contentValue,
       detailRules,
       columns,

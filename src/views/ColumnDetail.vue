@@ -3,7 +3,7 @@
     <figure class="flex rounded-xl p-8 justify-center" v-if="column">
       <img
         class="w-32 h-32 rounded-full border"
-        :src="column.avatar"
+        :src="column.columnImage"
         alt=""
         width="384"
         height="512"
@@ -11,11 +11,11 @@
       <div class="pt-6 md:p-8 text-center md:text-left space-y-4">
         <blockquote>
           <p class="text-lg font-semibold">
-            {{ column.title }}
+            {{ column.columnName }}
           </p>
         </blockquote>
         <figcaption class="font-medium">
-          <div class="text-cyan-600">{{ column.description }}</div>
+          <div class="text-cyan-600">{{ column.columnDescription }}</div>
         </figcaption>
       </div>
     </figure>
@@ -27,7 +27,7 @@
 import { defineComponent, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
-import { GlobalDataProps } from "@/store";
+import { GlobalDataProps, ColumnProps } from "@/store";
 import PostList from "../components/PostList.vue";
 export default defineComponent({
   name: "ColumnDetail",
@@ -38,7 +38,10 @@ export default defineComponent({
     const route = useRoute();
     const store = useStore<GlobalDataProps>();
     const currentId = +route.params.id;
-    const column = computed(() => store.getters.getColumnById(currentId));
+    const column = computed(() => {
+      const data: ColumnProps = store.getters.getColumnById(currentId);
+      return data;
+    });
     const list = computed(() => store.state.posts);
     // const list = computed(() =>
     //   store.state.posts.filter((post) => post.columnId === currentId)

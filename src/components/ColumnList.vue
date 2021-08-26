@@ -5,9 +5,9 @@
       v-for="item in columnList"
       :key="item.id"
     >
-      <img :src="item.avatar" class="border rounded-full w-20" />
-      <p class="my-2 font-bold">{{ item.title }}</p>
-      <p class="my-3 w-4/5 text-left">{{ item.description }}</p>
+      <img :src="item.columnImage" class="border rounded-full w-20 h-20" />
+      <p class="my-2 font-bold">{{ item.columnName }}</p>
+      <p class="my-3 w-4/5 text-left">{{ item.columnDescription }}</p>
       <p>
         <button
           class="px-5 py-1 text-blue-600 font-semibold rounded border border-purple-200 hover:text-white hover:bg-blue-600 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
@@ -23,12 +23,7 @@
 <script lang="ts">
 import { computed, defineComponent, PropType } from "vue";
 import { useRouter } from "vue-router";
-export interface ColumnProps {
-  id: number;
-  avatar?: string;
-  title: string;
-  description: string;
-}
+import { ColumnProps } from "@/store";
 // 解决ts require 类型报错
 declare function require(moduleName: string): never;
 
@@ -44,8 +39,8 @@ export default defineComponent({
     const route = useRouter();
     const columnList = computed(() => {
       return props.list.map((item) => {
-        if (!item.avatar) {
-          item.avatar = require("@/assets/logo.png");
+        if (!item.columnImage) {
+          item.columnImage = require("@/assets/logo.png");
         }
         return item;
       });

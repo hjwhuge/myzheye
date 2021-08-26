@@ -6,15 +6,19 @@
       class="bg-white border rounded-md p-3 mb-3 shadow-sm"
     >
       <div class="card-body">
-        <h4>
+        <h4 class="text-2xl">
           <router-link :to="`/posts/${post.id}/`">{{ post.title }}</router-link>
         </h4>
         <div class="flex my-3 align-items-center">
           <div v-if="post.image" class="mr-5">
-            <img :src="post.image" :alt="post.title" class="rounded-lg w-96" />
+            <img
+              :src="post.image"
+              :alt="post.title"
+              class="rounded-lg w-32 h-32"
+            />
           </div>
           <p :class="{ 'col-8': post.image }" class="text-gray-500">
-            {{ post.content }}
+            {{ post.description }}
           </p>
         </div>
         <span class="text-gray-400">{{ post.createdAt }}</span>
@@ -25,14 +29,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType, computed } from "vue";
-interface PostProps {
-  id: number;
-  title: string;
-  content: string;
-  image?: string;
-  createdAt: string;
-  columnId: number;
-}
+import { PostProps } from "@/store";
 export default defineComponent({
   props: {
     list: {

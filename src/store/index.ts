@@ -6,18 +6,26 @@ export interface ResponseType<P> {
   data: P;
 }
 export interface UserProps {
+  id?: number;
   email?: string;
   nickName?: string;
-  id?: number;
+  password?: string;
+  userImage?: string;
+  userDescription?: string;
+  columnImage?: string;
+  columnName?: string;
+  columnDescription?: string;
 }
 export interface ColumnProps {
   id: number;
-  title: string;
-  avatar?: string;
-  description: string;
+  columnName: string;
+  columnImage?: string;
+  columnDescription: string;
 }
 export interface PostProps {
+  id?: number;
   title: string;
+  description:string;
   content: string;
   image?: string;
   createdAt: string;

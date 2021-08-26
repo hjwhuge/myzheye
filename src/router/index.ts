@@ -59,6 +59,8 @@ router.beforeEach((to, from, next) => {
       localStorage.removeItem("userinfo");
     } else {
       if (userinfo) {
+        // console.log(userinfo)
+        store.commit('fetchUserinfo',JSON.parse(userinfo))
         next();
       } else {
         store.dispatch("fetchUserinfo").then(() => {

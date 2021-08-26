@@ -31,6 +31,7 @@
 <script lang="ts">
 import { defineComponent, PropType, ref } from "vue";
 import axios from "axios";
+import createMessage from "@/components/createMessage";
 type UploadStatus = "ready" | "loading" | "success" | "error";
 type CheckFunction = (file: File) => boolean;
 export default defineComponent({
@@ -74,6 +75,9 @@ export default defineComponent({
           })
           .then((res) => {
             // console.log(res.data);
+            if (res.data.code !== 2000) {
+              createMessage("error", res.data.message || "Error");
+            }
             uploadedData.value = res.data;
             fileStatus.value = "success";
             context.emit("file-uploaded", res.data);

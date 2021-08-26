@@ -4,6 +4,46 @@
       <div class="px-4 py-5 bg-white sm:p-6">
         <div class="grid grid-cols-6 gap-6">
           <div class="col-span-6 sm:col-span-4">
+            <Uploader
+              action="/api/upload"
+              :beforeUpload="uploadCheck"
+              @file-uploaded="onUserFileUploaded"
+              class="flex justify-center items-center bg-gray-100 text-gray-600 h-48 rounded cursor-pointer"
+            >
+              <h2>点击上传用户头图</h2>
+              <template v-slot:loading>
+                <div class="flex items-center">
+                  <div
+                    class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"
+                  ></div>
+                  <h2 class="ml-10">正在上传....</h2>
+                </div>
+              </template>
+              <template #uploaded="dataProps">
+                <img
+                  :src="dataProps.uploadedData.data.url"
+                  class="w-full h-full object-contain"
+                  alt=""
+                  v-if="dataProps.uploadedData.data"
+                />
+              </template>
+            </Uploader>
+          </div>
+          <div class="col-span-6 sm:col-span-4">
+            <label
+              for="email-address"
+              class="block text-sm font-medium text-gray-700"
+              >用户简介</label
+            >
+            <ValidateInput
+              :rules="userDescriptionRules"
+              v-model="formData.userDescription"
+              type="text"
+              name="email-address"
+              placeholder="请输入用户简介"
+            />
+          </div>
+          <div class="col-span-6 sm:col-span-4">
             <label
               for="email-address"
               class="block text-sm font-medium text-gray-700"
@@ -62,6 +102,59 @@
               placeholder="请再次输入密码"
             />
           </div>
+          <div class="col-span-6 sm:col-span-4">
+            <Uploader
+              action="/api/upload"
+              :beforeUpload="uploadCheck"
+              @file-uploaded="onFileUploaded"
+              class="flex justify-center items-center bg-gray-100 text-gray-600 h-48 rounded cursor-pointer"
+            >
+              <h2>点击上传专栏头图</h2>
+              <template v-slot:loading>
+                <div class="flex items-center">
+                  <div
+                    class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-12 w-12 mb-4"
+                  ></div>
+                  <h2 class="ml-10">正在上传....</h2>
+                </div>
+              </template>
+              <template #uploaded="dataProps">
+                <img
+                  :src="dataProps.uploadedData.data.url"
+                  class="w-full h-full object-contain"
+                  alt=""
+                />
+              </template>
+            </Uploader>
+          </div>
+          <div class="col-span-6 sm:col-span-4">
+            <label
+              for="email-address"
+              class="block text-sm font-medium text-gray-700"
+              >专栏名称</label
+            >
+            <ValidateInput
+              :rules="columnNameRules"
+              v-model="formData.columnName"
+              type="text"
+              name="email-address"
+              placeholder="请输入专栏名称"
+            />
+          </div>
+          <div class="col-span-6 sm:col-span-4">
+            <label
+              for="email-address"
+              class="block text-sm font-medium text-gray-700"
+              >专栏简介</label
+            >
+            <ValidateInput
+              :rules="columnDescriptionRules"
+              v-model="formData.columnDescription"
+              type="text"
+              name="email-address"
+              placeholder="请输入专栏简介"
+            />
+          </div>
         </div>
       </div>
       <template v-slot:submit>
@@ -76,27 +169,36 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from "vue";
+import { defineComponent, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { UserProps } from "@/store";
 import { signup } from "@/api";
 import createMessage from "@/components/createMessage";
 import ValidateForm from "../components/ValidateForm.vue";
 import ValidateInput, { RulesProp } from "../components/ValidateInput.vue";
-import { useStore } from "vuex";
+import Uploader from "@/components/Uploader.vue";
+import { beforeUploadCheck } from "@/utils/helper";
 export default defineComponent({
   name: "Login",
   components: {
     ValidateForm,
     ValidateInput,
+    Uploader,
   },
   setup() {
     const store = useStore();
     const router = useRouter();
+    const curUserImageUrl = ref("");
+    const curImageUrl = ref("");
     const formData = reactive({
       email: "",
       nickName: "",
       password: "",
       repeatPassword: "",
+      userDescription: "",
+      columnName: "",
+      columnDescription: "",
     });
     const emailRules: RulesProp = [
       { type: "required", message: "邮箱地址不能为空" },
@@ -118,14 +220,32 @@ export default defineComponent({
         },
       },
     ];
+    const userDescriptionRules: RulesProp = [
+      { type: "required", message: "用户简介不能为空" },
+    ];
+    const columnNameRules: RulesProp = [
+      { type: "required", message: "专栏名称不能为空" },
+    ];
+    const columnDescriptionRules: RulesProp = [
+      { type: "required", message: "专栏简介不能为空" },
+    ];
     const onFormSubmit = (result: boolean) => {
       // console.log(result);
       if (result) {
-        const params = {
+        const params: UserProps = {
           email: formData.email,
           nickName: formData.nickName,
           password: formData.password,
+          userDescription: formData.userDescription,
+          columnName: formData.columnName,
+          columnDescription: formData.columnDescription,
         };
+        if (curUserImageUrl.value) {
+          params.userImage = curUserImageUrl.value;
+        }
+        if (curImageUrl.value) {
+          params.columnImage = curImageUrl.value;
+        }
         signup(params).then(() => {
           // console.log(res);
           createMessage("success", "注册成功");
@@ -133,13 +253,44 @@ export default defineComponent({
         });
       }
     };
+    const uploadCheck = (file: File) => {
+      //   console.log(file);
+      const result = beforeUploadCheck(file, {
+        format: ["image/jpeg", "image/png"],
+        size: 1,
+      });
+      const { passed, error } = result;
+      if (error === "format") {
+        createMessage("error", "上传图片只能是 JPG 或者 PNG 格式！");
+      }
+      if (error === "size") {
+        createMessage("error", "上传图片大小不能大于 1Mb ！");
+      }
+      return passed;
+    };
+    const onUserFileUploaded = (rawData: any) => {
+      // console.log(rawData);
+      curUserImageUrl.value = rawData.data.url;
+      createMessage("success", "图片上传成功！");
+    };
+    const onFileUploaded = (rawData: any) => {
+      // console.log(rawData);
+      curImageUrl.value = rawData.data.url;
+      createMessage("success", "图片上传成功！");
+    };
     return {
       formData,
       emailRules,
       nameRules,
       passwordRules,
       repeatPasswordRules,
+      userDescriptionRules,
+      columnNameRules,
+      columnDescriptionRules,
       onFormSubmit,
+      uploadCheck,
+      onUserFileUploaded,
+      onFileUploaded,
     };
   },
 });

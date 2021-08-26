@@ -19,7 +19,7 @@
 
           <!-- Profile dropdown -->
           <!-- <Dropdown /> -->
-          <Dropdown>
+          <Dropdown :userImage="user.userImage">
             <DropdownItem @click.prevent="onCreate">新建文章</DropdownItem>
             <DropdownItem disabled>编辑资料</DropdownItem>
             <DropdownItem @click="onLogout">退出登录</DropdownItem>

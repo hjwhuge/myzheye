@@ -4,10 +4,10 @@
       <img
         :src="currentPost.image"
         alt="currentPost.title"
-        class="rounded-lg img-fluid my-4"
+        class="w-80 mt-4"
         v-if="currentPost.image"
       />
-      <h2 class="mb-4">{{ currentPost.title }}</h2>
+      <h2 class="my-4 text-4xl">{{ currentPost.title }}</h2>
       <div
         class="user-profile-component border-top border-bottom py-3 mb-5 align-items-center row g-0"
       >
