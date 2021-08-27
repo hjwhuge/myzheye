@@ -19,20 +19,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from "vue";
-import { useStore } from "vuex";
-import { GlobalDataProps } from "@/store/index";
+import { defineComponent, PropType } from "vue";
+import { UserProps } from "@/store/index";
 export default defineComponent({
   name: "user-profile",
-  setup() {
-    const store = useStore<GlobalDataProps>();
-    const user = computed(() => {
-      return store.state.user;
-    });
-    return {
-      user,
-    };
+  props: {
+    user: {
+      type: Object as PropType<UserProps>,
+    },
   },
+  setup() {},
 });
 </script>
 <style scoped></style>

@@ -145,12 +145,14 @@ export default defineComponent({
           createMessage("error", "请先选择专栏列表");
           return;
         }
+        const { user } = store.state;
         const newPost: PostProps = {
           title: titleValue.value,
           description: descriptionValue.value,
           content: contentValue.value,
           columnId: +columnIdValue.value,
           createdAt: new Date().toLocaleString(),
+          author: user ? JSON.stringify(user) : "",
         };
         if (curImageUrl.value) {
           newPost.image = curImageUrl.value;

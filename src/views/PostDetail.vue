@@ -11,13 +11,13 @@
       <div
         class="flex items-center justify-between border-t-2 border-b-2 py-4 my-8"
       >
-        <user-profile></user-profile>
+        <user-profile :user="currentPost.author"></user-profile>
         <span class="text-muted text-right font-italic"
           >发表于：{{ currentPost.createdAt }}</span
         >
       </div>
       <div v-html="currentHTML"></div>
-      <!-- <div v-if="showEditArea" class="btn-group mt-5">
+      <div v-if="showEditArea" class="btn-group mt-5">
         <router-link
           type="button"
           class="btn btn-success"
@@ -32,17 +32,18 @@
         >
           删除
         </button>
-      </div> -->
+      </div>
     </article>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, onMounted, ref, computed } from "vue";
 import MarkdownIt from "markdown-it";
 import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
 import { getPost } from "@/api";
-import { PostProps, UserProps } from "../store";
+import { GlobalDataProps, PostProps } from "../store";
 import UserProfile from "@/components/UserProfile.vue";
 import createMessage from "../components/createMessage";
 
@@ -54,6 +55,7 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const router = useRouter();
+    const store = useStore<GlobalDataProps>();
     const modalIsVisible = ref(false);
     const currentId = +route.params.id;
     const md = new MarkdownIt();
@@ -66,15 +68,14 @@ export default defineComponent({
         currentHTML.value = md.render(res.data.content);
       });
     });
-    // const showEditArea = computed(() => {
-    //   const { isLogin, _id } = store.state.user;
-    //   if (currentPost.value && currentPost.value.author && isLogin) {
-    //     const postAuthor = currentPost.value.author as UserProps;
-    //     return postAuthor._id === _id;
-    //   } else {
-    //     return false;
-    //   }
-    // });
+    const showEditArea = computed(() => {
+      const { id } = store.state.user;
+      if (currentPost.value && currentPost.value.id) {
+        return currentPost.value.columnId === id;
+      } else {
+        return false;
+      }
+    });
     // const hideAndDelete = () => {
     //   modalIsVisible.value = false;
     //   store
@@ -92,7 +93,7 @@ export default defineComponent({
     return {
       currentPost,
       currentHTML,
-      //   showEditArea,
+      showEditArea,
       modalIsVisible,
       //   hideAndDelete,
     };

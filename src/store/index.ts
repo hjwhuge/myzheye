@@ -30,6 +30,7 @@ export interface PostProps {
   image?: string;
   createdAt: string;
   columnId: number;
+  author?:string | UserProps;
 }
 export interface GlobalDataProps {
   loading: boolean;
