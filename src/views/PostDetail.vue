@@ -9,15 +9,10 @@
       />
       <h2 class="my-4 text-4xl">{{ currentPost.title }}</h2>
       <div
-        class="user-profile-component border-top border-bottom py-3 mb-5 align-items-center row g-0"
+        class="flex items-center justify-between border-t-2 border-b-2 py-4 my-8"
       >
-        <!-- <div class="col">
-          <user-profile
-            :user="currentPost.author"
-            v-if="typeof currentPost.author === 'object'"
-          ></user-profile>
-        </div> -->
-        <span class="text-muted col text-right font-italic"
+        <user-profile></user-profile>
+        <span class="text-muted text-right font-italic"
           >发表于：{{ currentPost.createdAt }}</span
         >
       </div>
@@ -48,13 +43,13 @@ import MarkdownIt from "markdown-it";
 import { useRoute, useRouter } from "vue-router";
 import { getPost } from "@/api";
 import { PostProps, UserProps } from "../store";
-// import UserProfile from "../components/UserProfile.vue";
+import UserProfile from "@/components/UserProfile.vue";
 import createMessage from "../components/createMessage";
 
 export default defineComponent({
   name: "post-detail",
   components: {
-    // UserProfile,
+    UserProfile,
   },
   setup() {
     const route = useRoute();
