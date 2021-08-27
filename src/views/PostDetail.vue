@@ -16,23 +16,22 @@
           >发表于：{{ currentPost.createdAt }}</span
         >
       </div>
-      <div v-html="currentHTML"></div>
-      <div v-if="showEditArea" class="btn-group mt-5">
-        <router-link
-          type="button"
-          class="btn btn-success"
-          :to="{ name: 'create', query: { id: currentPost._id } }"
-        >
-          编辑
-        </router-link>
+      <div v-if="showEditArea" class="space-x-3 mb-2">
         <button
-          type="button"
-          class="btn btn-danger"
+          class="py-2 px-4 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+        >
+          <router-link :to="{ name: 'create', query: { id: currentPost.id } }">
+            编辑
+          </router-link>
+        </button>
+        <button
+          class="py-2 px-4 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-opacity-75"
           @click.prevent="modalIsVisible = true"
         >
           删除
         </button>
       </div>
+      <div v-html="currentHTML"></div>
     </article>
   </div>
 </template>

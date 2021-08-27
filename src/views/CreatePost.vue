@@ -3,22 +3,6 @@
     <ValidateForm @form-submit="onFormSubmit">
       <div class="px-4 py-5 bg-white sm:p-6">
         <div class="grid grid-cols-6 gap-6">
-          <div class="col-span-6 sm:col-span-3">
-            <label for="country" class="block text-sm font-medium text-gray-700"
-              >专栏</label
-            >
-            <select
-              v-model="columnIdValue"
-              id="country"
-              name="country"
-              autocomplete="country"
-              class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            >
-              <option v-for="item in columns" :key="item.id" :value="item.id">
-                {{ item.columnName }}
-              </option>
-            </select>
-          </div>
           <div class="col-span-6 sm:col-span-4">
             <Uploader
               action="/api/upload"
@@ -102,7 +86,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed, onMounted } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { GlobalDataProps, PostProps } from "@/store";
@@ -124,7 +108,6 @@ export default defineComponent({
     const store = useStore<GlobalDataProps>();
 
     const curImageUrl = ref("");
-    const columnIdValue = ref("");
     const titleValue = ref("");
     const titleRules: RulesProp = [
       { type: "required", message: "文章标题不能为空" },
@@ -137,22 +120,22 @@ export default defineComponent({
     const detailRules: RulesProp = [
       { type: "required", message: "文章详情不能为空" },
     ];
-    const columns = computed(() => store.state.columns);
     const onFormSubmit = (result: boolean) => {
-      // console.log(result, columnIdValue.value);
+      // console.log(result);
       if (result) {
-        if (!columnIdValue.value) {
-          createMessage("error", "请先选择专栏列表");
+        const { user } = store.state;
+        if (!user.id) {
+          createMessage("error", "用户信息不存在，请重新登录");
           return;
         }
-        const { user } = store.state;
+        const columnId = user.id;
         const newPost: PostProps = {
           title: titleValue.value,
           description: descriptionValue.value,
           content: contentValue.value,
-          columnId: +columnIdValue.value,
+          columnId,
           createdAt: new Date().toLocaleString(),
-          author: user ? JSON.stringify(user) : "",
+          author: user,
         };
         if (curImageUrl.value) {
           newPost.image = curImageUrl.value;
@@ -161,7 +144,7 @@ export default defineComponent({
           // console.log(res);
           createMessage("success", "文章新建成功！");
 
-          router.push({ name: "column", params: { id: columnIdValue.value } });
+          router.push({ name: "column", params: { id: columnId } });
         });
       }
     };
@@ -181,22 +164,17 @@ export default defineComponent({
       return passed;
     };
     const onFileUploaded = (rawData: any) => {
-      console.log(rawData);
+      // console.log(rawData);
       curImageUrl.value = rawData.data.url;
       createMessage("success", "图片上传成功！");
     };
-    onMounted(() => {
-      store.dispatch("fetchColumns");
-    });
     return {
-      columnIdValue,
       titleValue,
       titleRules,
       descriptionValue,
       descriptionRules,
       contentValue,
       detailRules,
-      columns,
       onFormSubmit,
       uploadCheck,
       onFileUploaded,
