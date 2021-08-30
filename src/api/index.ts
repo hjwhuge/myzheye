@@ -46,6 +46,14 @@ export function createPost(data: PostProps) {
   });
 }
 
+export function updatePost(data: PostProps,postId: number) {
+  return request({
+    url: `/posts/${postId}`,
+    method: "put",
+    data,
+  });
+}
+
 export function getUserinfo() {
   return request({
     url: "/user",

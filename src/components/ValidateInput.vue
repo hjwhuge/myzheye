@@ -12,9 +12,8 @@
       v-else
       class="mt-1 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
       :class="[{ 'border-red-400': inputRef.error }]"
-      :value="inputRef.val"
       v-bind="$attrs"
-      @input="updateValue"
+      v-model="inputRef.val"
       @blur="validateInput"
     />
     <p
@@ -28,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType, reactive, onMounted } from "vue";
+import { defineComponent, PropType, reactive, onMounted, computed } from "vue";
 import { emitter } from "./ValidateForm.vue";
 const emailReg = /\S+@\S+\.\S+/;
 interface RuleProp {
@@ -50,15 +49,15 @@ export default defineComponent({
   inheritAttrs: false,
   setup(props, context) {
     const inputRef = reactive({
-      val: props.modelValue || "",
+      val: computed({
+        get: () => props.modelValue || "",
+        set: (val) => {
+          context.emit("update:modelValue", val);
+        },
+      }),
       error: false,
       message: "",
     });
-    const updateValue = (e: KeyboardEvent) => {
-      const targetValue = (e.target as HTMLInputElement).value;
-      inputRef.val = targetValue;
-      context.emit("update:modelValue", targetValue);
-    };
     const validateInput = () => {
       const { rules } = props;
       if (rules) {
@@ -91,7 +90,6 @@ export default defineComponent({
     return {
       inputRef,
       validateInput,
-      updateValue,
     };
   },
 });

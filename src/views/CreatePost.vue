@@ -8,6 +8,7 @@
               action="/api/upload"
               :beforeUpload="uploadCheck"
               @file-uploaded="onFileUploaded"
+              :uploaded="uploadData"
               class="flex justify-center items-center bg-gray-100 text-gray-600 h-48 rounded cursor-pointer"
             >
               <h2>点击上传文章头图</h2>
@@ -21,7 +22,9 @@
               </template>
               <template #uploaded="dataProps">
                 <img
-                  :src="dataProps.uploadedData.data.url"
+                  :src="
+                    dataProps.uploadedData && dataProps.uploadedData.data.url
+                  "
                   class="w-full h-full object-contain"
                   alt=""
                 />
@@ -78,7 +81,7 @@
         <span
           class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 cursor-pointer"
         >
-          发表文章
+          {{ isEditMode ? "编辑文章" : "发表文章" }}
         </span>
       </template>
     </ValidateForm>
@@ -86,16 +89,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from "vue";
-import { useRouter } from "vue-router";
+import { defineComponent, ref, onMounted } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
 import { GlobalDataProps, PostProps } from "@/store";
-import { createPost } from "@/api";
+import { createPost, updatePost } from "@/api";
 import createMessage from "@/components/createMessage";
 import ValidateForm from "../components/ValidateForm.vue";
 import ValidateInput, { RulesProp } from "../components/ValidateInput.vue";
 import Uploader from "@/components/Uploader.vue";
 import { beforeUploadCheck } from "@/utils/helper";
+import { getPost } from "@/api";
 export default defineComponent({
   name: "Create",
   components: {
@@ -105,8 +109,11 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
+    const route = useRoute();
     const store = useStore<GlobalDataProps>();
+    const isEditMode = !!route.query.id;
 
+    const uploadData = ref();
     const curImageUrl = ref("");
     const titleValue = ref("");
     const titleRules: RulesProp = [
@@ -140,12 +147,21 @@ export default defineComponent({
         if (curImageUrl.value) {
           newPost.image = curImageUrl.value;
         }
-        createPost(newPost).then(() => {
-          // console.log(res);
-          createMessage("success", "文章新建成功！");
+        if (route.query.id) {
+          updatePost(newPost, +route.query.id).then(() => {
+            // console.log(res);
+            createMessage("success", "文章编辑成功！");
 
-          router.push({ name: "column", params: { id: columnId } });
-        });
+            router.push({ name: "column", params: { id: columnId } });
+          });
+        } else {
+          createPost(newPost).then(() => {
+            // console.log(res);
+            createMessage("success", "文章新建成功！");
+
+            router.push({ name: "column", params: { id: columnId } });
+          });
+        }
       }
     };
     const uploadCheck = (file: File) => {
@@ -168,6 +184,24 @@ export default defineComponent({
       curImageUrl.value = rawData.data.url;
       createMessage("success", "图片上传成功！");
     };
+
+    onMounted(() => {
+      // console.log(route.query);
+      if (route.query.id) {
+        const currentId = +route.query.id;
+        getPost(currentId).then((res) => {
+          // console.log(res.data);
+          const { image, title, description, content } = res.data;
+          if (image) {
+            uploadData.value = { data: { url: image } };
+          }
+          curImageUrl.value = image;
+          titleValue.value = title;
+          descriptionValue.value = description;
+          contentValue.value = content;
+        });
+      }
+    });
     return {
       titleValue,
       titleRules,
@@ -178,6 +212,8 @@ export default defineComponent({
       onFormSubmit,
       uploadCheck,
       onFileUploaded,
+      isEditMode,
+      uploadData,
     };
   },
 });
