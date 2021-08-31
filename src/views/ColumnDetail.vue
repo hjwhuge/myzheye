@@ -19,15 +19,15 @@
         </figcaption>
       </div>
     </figure>
-    <PostList :list="list"></PostList>
+    <PostList :list="postList"></PostList>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, onMounted } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import { useStore } from "vuex";
-import { GlobalDataProps, ColumnProps } from "@/store";
+import { ColumnProps } from "@/store";
+import { getColumn, getPosts } from "@/api";
 import PostList from "../components/PostList.vue";
 export default defineComponent({
   name: "ColumnDetail",
@@ -36,23 +36,22 @@ export default defineComponent({
   },
   setup() {
     const route = useRoute();
-    const store = useStore<GlobalDataProps>();
     const currentId = +route.params.id;
-    const column = computed(() => {
-      const data: ColumnProps = store.getters.getColumnById(currentId);
-      return data;
-    });
-    const list = computed(() => store.state.posts);
-    // const list = computed(() =>
-    //   store.state.posts.filter((post) => post.columnId === currentId)
-    // );
+    const column = ref<ColumnProps>();
+    const postList = ref([]);
     onMounted(() => {
-      store.dispatch("fetchPost", currentId);
-      store.dispatch("fetchColumn", currentId);
+      getColumn(currentId).then((res) => {
+        // console.log(res.data);
+        column.value = res.data;
+      });
+      getPosts(currentId).then((res) => {
+        // console.log(res.data);
+        postList.value = res.data.list;
+      });
     });
     return {
       column,
-      list,
+      postList,
     };
   },
 });

@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import { PostProps } from "@/store";
+import { PostProps, UserProps, LoginProps } from "@/store";
 
 export function getColumns() {
   return request({
@@ -71,7 +71,7 @@ export function getUserinfo() {
   });
 }
 
-export function signup(data: unknown) {
+export function signup(data:UserProps) {
   return request({
     url: "/user",
     method: "post",
@@ -79,7 +79,7 @@ export function signup(data: unknown) {
   });
 }
 
-export function login(data: unknown) {
+export function login(data: LoginProps) {
   return request({
     url: "/user/login",
     method: "post",
