@@ -1,10 +1,17 @@
 import { createStore } from "vuex";
-import { getColumns,   getUserinfo } from "@/api";
+import { getColumns, getUserinfo } from "@/api";
+import { arrayDeduplication } from '@/utils/helper'
 export interface ResponseType<P> {
   code: number;
   msg: string;
   data: P;
 }
+export interface pageProps {
+  columnId?: number;
+  page: number;
+  size: number;
+}
+
 export interface UserProps {
   id?: number;
   email?: string;
@@ -29,7 +36,7 @@ export interface ColumnProps {
 export interface PostProps {
   id?: number;
   title: string;
-  description:string;
+  description: string;
   content: string;
   image?: string;
   createdAt: string;
@@ -39,18 +46,15 @@ export interface PostProps {
 export interface GlobalDataProps {
   loading: boolean;
   columns: ColumnProps[];
+  columnsTotal: number;
   user: UserProps;
 }
 const store = createStore<GlobalDataProps>({
   state: {
     loading: false,
     columns: [],
+    columnsTotal: 0,
     user: {},
-  },
-  getters: {
-    getColumnById: (state) => (id: number) => {
-      return state.columns.find((c) => c.id === id);
-    },
   },
   mutations: {
     logout(state) {
@@ -63,15 +67,18 @@ const store = createStore<GlobalDataProps>({
       localStorage.setItem("userinfo", JSON.stringify(userinfo));
     },
     fetchColumns(state, data) {
-      state.columns = data?.list || [];
+      // state.columns = data?.list || [];
+      const newList = state.columns.concat(data.list)
+      state.columns = arrayDeduplication(newList, 'id');
+      state.columnsTotal = data?.totalCount || [];
     },
     setLoading(state, status) {
       state.loading = status;
     },
   },
   actions: {
-    async fetchColumns(context) {
-      const res = await getColumns();
+    async fetchColumns(context, params = { page: 1, size: 3 }) {
+      const res = await getColumns(params);
       context.commit("fetchColumns", res?.data);
     },
     async fetchUserinfo({ commit }) {

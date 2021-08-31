@@ -1,3 +1,5 @@
+import { ColumnProps } from "@/store";
+
 interface CheckCondition {
   format?: string[];
   size?: number;
@@ -19,4 +21,18 @@ export function beforeUploadCheck(file: File, condition: CheckCondition) {
     passed: isValidFormat && isValidSize,
     error,
   };
+}
+
+/**
+ * 数组去重（每一项是对象）
+ * @param  {array} arr 去重的数组
+ * @param  {string} key 每个对象的唯一值
+ * @return {array}      返回一个去重之后的对象
+ */
+
+export function arrayDeduplication(arr: Array<ColumnProps>, key: 'id' | 'columnName') {
+  arr = arr.filter((currentValue, index, arr) => {
+    return index === arr.findIndex((t) => t[key] === currentValue[key])
+  })
+  return arr;
 }

@@ -1,14 +1,11 @@
 import request from "@/utils/request";
-import { PostProps, UserProps, LoginProps } from "@/store";
+import { PostProps, UserProps, LoginProps, pageProps } from "@/store";
 
-export function getColumns() {
+export function getColumns(params: pageProps) {
   return request({
     url: "/columns",
     method: "get",
-    params: {
-      page: 1,
-      size: 10,
-    },
+    params,
   });
 }
 
@@ -46,7 +43,7 @@ export function createPost(data: PostProps) {
   });
 }
 
-export function updatePost(data: PostProps,postId: number) {
+export function updatePost(data: PostProps, postId: number) {
   return request({
     url: `/posts/${postId}`,
     method: "put",
@@ -71,7 +68,7 @@ export function getUserinfo() {
   });
 }
 
-export function signup(data:UserProps) {
+export function signup(data: UserProps) {
   return request({
     url: "/user",
     method: "post",
