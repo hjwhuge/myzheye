@@ -19,7 +19,7 @@
 
           <!-- Profile dropdown -->
           <!-- <Dropdown /> -->
-          <Dropdown :userImage="user.userImage">
+          <Dropdown :userImage="user.userImage || defalutImage">
             <DropdownItem @click.prevent="onCreate">新建文章</DropdownItem>
             <DropdownItem disabled>编辑资料</DropdownItem>
             <DropdownItem @click="onLogout">退出登录</DropdownItem>
@@ -52,6 +52,8 @@ import { UserProps } from "@/store";
 import { logout } from "@/api";
 import Dropdown from "@/components/Dropdown.vue";
 import DropdownItem from "@/components/DropdownItem.vue";
+// 解决ts require 类型报错
+declare function require(moduleName: string): never;
 
 export default defineComponent({
   components: {
@@ -82,11 +84,13 @@ export default defineComponent({
         router.push("/login");
       });
     };
+    const defalutImage: string = require("@/assets/logo.png");
     return {
       onLogin,
       onSignup,
       onLogout,
       onCreate,
+      defalutImage,
     };
   },
 });

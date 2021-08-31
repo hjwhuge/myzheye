@@ -3,7 +3,7 @@
     <figure class="flex rounded-xl p-8 justify-center" v-if="column">
       <img
         class="w-32 h-32 rounded-full border"
-        :src="column.columnImage"
+        :src="column.columnImage || defalutImage"
         alt=""
         width="384"
         height="512"
@@ -29,6 +29,8 @@ import { useRoute } from "vue-router";
 import { ColumnProps } from "@/store";
 import { getColumn, getPosts } from "@/api";
 import PostList from "../components/PostList.vue";
+// 解决ts require 类型报错
+declare function require(moduleName: string): never;
 export default defineComponent({
   name: "ColumnDetail",
   components: {
@@ -39,6 +41,7 @@ export default defineComponent({
     const currentId = +route.params.id;
     const column = ref<ColumnProps>();
     const postList = ref([]);
+    const defalutImage: string = require("@/assets/logo.png");
     onMounted(() => {
       getColumn(currentId).then((res) => {
         // console.log(res.data);
@@ -52,6 +55,7 @@ export default defineComponent({
     return {
       column,
       postList,
+      defalutImage,
     };
   },
 });
