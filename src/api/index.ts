@@ -54,6 +54,16 @@ export function updatePost(data: PostProps,postId: number) {
   });
 }
 
+export function delPost(id: number) {
+  return request({
+    url: `/posts/delete`,
+    method: "post",
+    data: {
+      id,
+    },
+  });
+}
+
 export function getUserinfo() {
   return request({
     url: "/user",

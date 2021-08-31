@@ -33,6 +33,14 @@
       </div>
       <div v-html="currentHTML"></div>
     </article>
+    <Modal
+      title="提示"
+      :visible="modalIsVisible"
+      @modal-on-close="modalIsVisible = false"
+      @modal-on-confirm="hideAndDelete"
+    >
+      <p>你确定要删除这篇文章吗？</p>
+    </Modal>
   </div>
 </template>
 
@@ -41,15 +49,17 @@ import { defineComponent, onMounted, ref, computed } from "vue";
 import MarkdownIt from "markdown-it";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
-import { getPost } from "@/api";
+import { getPost, delPost } from "@/api";
 import { GlobalDataProps, PostProps } from "../store";
 import UserProfile from "@/components/UserProfile.vue";
+import Modal from "@/components/Modal.vue";
 import createMessage from "../components/createMessage";
 
 export default defineComponent({
   name: "post-detail",
   components: {
     UserProfile,
+    Modal,
   },
   setup() {
     const route = useRoute();
@@ -75,26 +85,27 @@ export default defineComponent({
         return false;
       }
     });
-    // const hideAndDelete = () => {
-    //   modalIsVisible.value = false;
-    //   store
-    //     .dispatch("deletePost", currentId)
-    //     .then((rawData: ResponseType<PostProps>) => {
-    //       createMessage("删除成功，2秒后跳转到专栏首页", "success", 2000);
-    //       setTimeout(() => {
-    //         router.push({
-    //           name: "column",
-    //           params: { id: rawData.data.column },
-    //         });
-    //       }, 2000);
-    //     });
-    // };
+    const hideAndDelete = () => {
+      modalIsVisible.value = false;
+      delPost(currentId).then((res) => {
+        // console.log(res.data);
+        createMessage("success", "删除成功，2秒后跳转到专栏首页", 2000);
+        setTimeout(() => {
+          router.push({
+            name: "column",
+            params: {
+              id: res.data.columnId,
+            },
+          });
+        }, 2000);
+      });
+    };
     return {
       currentPost,
       currentHTML,
       showEditArea,
       modalIsVisible,
-      //   hideAndDelete,
+      hideAndDelete,
     };
   },
 });
