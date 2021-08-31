@@ -21,6 +21,7 @@
           <!-- <Dropdown /> -->
           <Dropdown :userImage="user.userImage || defalutImage">
             <DropdownItem @click.prevent="onCreate">新建文章</DropdownItem>
+            <DropdownItem @click.prevent="onMyColumn">我的专栏</DropdownItem>
             <DropdownItem disabled>编辑资料</DropdownItem>
             <DropdownItem @click="onLogout">退出登录</DropdownItem>
           </Dropdown>
@@ -66,7 +67,7 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
+  setup(props) {
     const router = useRouter();
     const store = useStore();
     const onLogin = () => {
@@ -77,6 +78,15 @@ export default defineComponent({
     };
     const onCreate = () => {
       router.push("/create");
+    };
+    const onMyColumn = () => {
+      const { id } = props.user;
+      if (id) {
+        router.push({
+          name: "column",
+          params: { id },
+        });
+      }
     };
     const onLogout = () => {
       logout().then(() => {
@@ -90,6 +100,7 @@ export default defineComponent({
       onSignup,
       onLogout,
       onCreate,
+      onMyColumn,
       defalutImage,
     };
   },
