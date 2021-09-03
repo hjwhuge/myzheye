@@ -29,8 +29,8 @@ import { useRoute } from "vue-router";
 import { ColumnProps } from "@/store";
 import { getColumn, getPosts } from "@/api";
 import PostList from "../components/PostList.vue";
-// 解决ts require 类型报错
-declare function require(moduleName: string): never;
+import defalutImage from "@/assets/logo.png";
+
 export default defineComponent({
   name: "ColumnDetail",
   components: {
@@ -41,7 +41,6 @@ export default defineComponent({
     const currentId = +route.params.id;
     const column = ref<ColumnProps>();
     const postList = ref([]);
-    const defalutImage: string = require("@/assets/logo.png");
     onMounted(() => {
       getColumn(currentId).then((res) => {
         // console.log(res.data);

@@ -53,8 +53,7 @@ import { UserProps } from "@/store";
 import { logout } from "@/api";
 import Dropdown from "@/components/Dropdown.vue";
 import DropdownItem from "@/components/DropdownItem.vue";
-// 解决ts require 类型报错
-declare function require(moduleName: string): never;
+import defalutImage from "@/assets/logo.png";
 
 export default defineComponent({
   components: {
@@ -94,7 +93,6 @@ export default defineComponent({
         router.push("/login");
       });
     };
-    const defalutImage: string = require("@/assets/logo.png");
     return {
       onLogin,
       onSignup,
