@@ -1,6 +1,6 @@
 import { createStore } from "vuex";
 import { getColumns, getUserinfo } from "@/api";
-import { arrayDeduplication } from '@/utils/helper'
+import { arrayDeduplication } from "@/utils/helper";
 export interface ResponseType<P> {
   code: number;
   msg: string;
@@ -68,8 +68,8 @@ const store = createStore<GlobalDataProps>({
     },
     fetchColumns(state, data) {
       // state.columns = data?.list || [];
-      const newList = state.columns.concat(data.list)
-      state.columns = arrayDeduplication(newList, 'id');
+      const newList = state.columns.concat(data.list);
+      state.columns = arrayDeduplication(newList, "id");
       state.columnsTotal = data?.totalCount || [];
     },
     setLoading(state, status) {

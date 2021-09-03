@@ -30,9 +30,12 @@ export function beforeUploadCheck(file: File, condition: CheckCondition) {
  * @return {array}      返回一个去重之后的对象
  */
 
-export function arrayDeduplication(arr: Array<ColumnProps>, key: 'id' | 'columnName') {
+export function arrayDeduplication(
+  arr: Array<ColumnProps>,
+  key: "id" | "columnName"
+) {
   arr = arr.filter((currentValue, index, arr) => {
-    return index === arr.findIndex((t) => t[key] === currentValue[key])
-  })
+    return index === arr.findIndex((t) => t[key] === currentValue[key]);
+  });
   return arr;
 }

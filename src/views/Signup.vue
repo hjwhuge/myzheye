@@ -21,10 +21,12 @@
               </template>
               <template #uploaded="dataProps">
                 <img
-                  :src="dataProps.uploadedData.data.url"
+                  :src="
+                    dataProps.uploadedData && dataProps.uploadedData.data.url
+                  "
                   class="w-full h-full object-contain"
                   alt=""
-                  v-if="dataProps.uploadedData.data"
+                  v-if="dataProps.uploadedData && dataProps.uploadedData.data"
                 />
               </template>
             </Uploader>
@@ -120,7 +122,9 @@
               </template>
               <template #uploaded="dataProps">
                 <img
-                  :src="dataProps.uploadedData.data.url"
+                  :src="
+                    dataProps.uploadedData && dataProps.uploadedData.data.url
+                  "
                   class="w-full h-full object-contain"
                   alt=""
                 />
@@ -171,7 +175,6 @@
 <script lang="ts">
 import { defineComponent, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
-import { useStore } from "vuex";
 import { UserProps } from "@/store";
 import { signup } from "@/api";
 import createMessage from "@/components/createMessage";
@@ -187,7 +190,6 @@ export default defineComponent({
     Uploader,
   },
   setup() {
-    const store = useStore();
     const router = useRouter();
     const curUserImageUrl = ref("");
     const curImageUrl = ref("");

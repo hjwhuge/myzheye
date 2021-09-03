@@ -122,7 +122,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent } from "vue";
 import useDOMCreate from "@/hooks/useDOMCreate";
 export default defineComponent({
   name: "modal",

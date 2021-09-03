@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, onUnmounted, watch } from "vue";
+import { defineComponent, ref, watch } from "vue";
 import useClickOutside from "@/hooks/useClickOutside";
 export default defineComponent({
   name: "",
@@ -63,22 +63,6 @@ export default defineComponent({
         isOpen.value = false;
       }
     });
-    // 可复用代码封装成hooks
-    // const handler = (e: MouseEvent) => {
-    //   const { value } = dropdownRef;
-    //   if (value) {
-    //     console.log(value);
-    //     if (!value.contains(e.target as HTMLElement) && isOpen.value === true) {
-    //       isOpen.value = false;
-    //     }
-    //   }
-    // };
-    // onMounted(() => {
-    //   document.addEventListener("click", handler);
-    // });
-    // onUnmounted(() => {
-    //   document.removeEventListener("click", handler);
-    // });
     return {
       isOpen,
       dropdownRef,
